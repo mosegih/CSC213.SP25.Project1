@@ -6,11 +6,9 @@ import java.util.*;
 
 public class UniqueHands {
     public static void main(String[] args) {
-        
         int[] deckSizes = {24, 28};
         int[] handSizes = {6, 7};
 
-        
         for (int deckSize : deckSizes) {
             for (int handSize : handSizes) {
                 System.out.println("Running simulation: Deck size = " + deckSize + ", Hand size = " + handSize);
@@ -18,21 +16,21 @@ public class UniqueHands {
                 // Run the simulation
                 int draws = runSimulation(deckSize, handSize);
 
-                
+                // Write results to CSV
                 writeResultsToCSV(deckSize, handSize, draws);
                 System.out.println("Simulation complete: " + draws + " draws.");
             }
         }
     }
 
-    // run th simulation
+    // Run the simulation
     public static int runSimulation(int deckSize, int handSize) {
         Set<Set<Card>> uniqueHands = new HashSet<>();
         Deck deck = new Deck(deckSize);
 
         int drawCount = 0;
 
-        // unique hands are seen
+        // Generate unique hands
         while (uniqueHands.size() < calculateUniqueHandCount(deckSize, handSize)) {
             if (deck.remainingCards() < handSize) {
                 deck.reset(deckSize);
@@ -46,7 +44,7 @@ public class UniqueHands {
         return drawCount;
     }
 
-    // Method results to a CSV file
+    // Write results to a CSV file
     private static void writeResultsToCSV(int deckSize, int handSize, int draws) {
         String fileName = "unique_hands_results.csv";
         boolean fileExists = new java.io.File(fileName).exists();
@@ -61,12 +59,12 @@ public class UniqueHands {
         }
     }
 
-    // calculate the total of unique hands
+    // Calculate the total number of unique hands
     public static long calculateUniqueHandCount(int deckSize, int handSize) {
         return factorial(deckSize) / (factorial(handSize) * factorial(deckSize - handSize));
     }
 
-    // Factor-method
+    // Factorial method
     private static long factorial(int n) {
         long result = 1;
         for (int i = 2; i <= n; i++) {

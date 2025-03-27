@@ -5,64 +5,52 @@ import java.util.Collections;
 import java.util.List;
 
 public class Deck {
-    private List<Card> cards;
+    private final List<Card> cards = new ArrayList<>();
+    private int currentIndex = 0;
 
     public Deck(int deckSize) {
-        if (deckSize != 24 && deckSize != 28) {
-            throw new IllegalArgumentException("Deck size must be 24 or 28.");
+        for (int i = 1; i <= deckSize; i++) {
+            cards.add(new Card(i));
         }
-        initializeDeck(deckSize);
         shuffle();
     }
 
-    // Initialize deck w/ unique cards
-    private void initializeDeck(int deckSize) {
-        cards = new ArrayList<>();
-        Card.Suit[] suits = Card.Suit.values();
-        Card.Rank[] ranks = Card.Rank.values();
-
-        int suitIndex = 0;
-        int rankIndex = 0;
-
-        for (int i = 0; i < deckSize; i++) {
-            cards.add(new Card(suits[suitIndex], ranks[rankIndex]));
-
-            // next rank and suit
-            rankIndex++;
-            if (rankIndex >= ranks.length) {
-                rankIndex = 0;
-                suitIndex = (suitIndex + 1) % suits.length;
-            }
-        }
-    }
-
-    // Shuffle 
     public void shuffle() {
         Collections.shuffle(cards);
+        currentIndex = 0;
     }
 
-    // Draw a hand 
     public List<Card> drawHand(int handSize) {
-        if (handSize > cards.size()) {
-            throw new IllegalArgumentException("Not enough cards to draw a hand.");
+        if (currentIndex + handSize > cards.size()) {
+            throw new IllegalStateException("Not enough cards remaining to draw a hand.");
         }
-
-        List<Card> hand = new ArrayList<>(cards.subList(0, handSize));
-        cards.removeAll(hand);
+        List<Card> hand = new ArrayList<>(cards.subList(currentIndex, currentIndex + handSize));
+        currentIndex += handSize;
         return hand;
     }
 
-    // Reset the deck
+    public int remainingCards() {
+        return cards.size() - currentIndex;
+    }
+
     public void reset(int deckSize) {
-        initializeDeck(deckSize);
+        cards.clear();
+        for (int i = 1; i <= deckSize; i++) {
+            cards.add(new Card(i));
+        }
         shuffle();
     }
 
-    public int remainingCards() {
-        return cards.size();
+    public static void main(String[] args) {
+        Deck deck = new Deck(52);
+        System.out.println("Initial deck: " + deck.cards);
+        List<Card> hand = deck.drawHand(5);
+        System.out.println("Drawn hand: " + hand);
+        System.out.println("Remaining cards: " + deck.remainingCards());
+        deck.reset(52);
+        System.out.println("Deck after reset: " + deck.cards);
     }
 
-    public List<Card> getCards() {
-        return new ArrayList<>(cards);  // Return a copy 
-    }
+
+
 }
